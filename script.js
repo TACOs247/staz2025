@@ -3,16 +3,32 @@ function getTodayDate() {
   return today.toISOString().split("T")[0]; // YYYY-MM-DD
 }
 
+function escapeHTML(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
 function saveMood(mood) {
   const date = getTodayDate();
   const comment = document.getElementById("comment")?.value || "";
 
   const moods = JSON.parse(localStorage.getItem("moods")) || {};
-  moods[date] = { mood, comment }; // ZAPISZ OBIE RZECZY
+  moods[date] = { mood, comment };
   localStorage.setItem("moods", JSON.stringify(moods));
 
   document.getElementById("status").textContent = `Zapisano: ${mood}`;
   showStats();
+
+  // Feedback UI
+  const buttons = document.querySelectorAll(".mood-options button");
+  buttons.forEach(btn => btn.classList.remove("selected"));
+  const clicked = Array.from(buttons).find(b => b.textContent === mood);
+  if (clicked) clicked.classList.add("selected");
+
+  // Czyść komentarz
+  const textarea = document.getElementById("comment");
+  if (textarea) textarea.value = "";
 }
 
 function showToday() {
@@ -39,7 +55,7 @@ function showHistory() {
     div.className = "history-entry";
     div.innerHTML = `
       <strong>${date}</strong>: ${entry.mood}<br />
-      <input type="text" value="${entry.comment || ""}" data-date="${date}" class="comment-input" />
+      <input type="text" value="${escapeHTML(entry.comment || "")}" data-date="${date}" class="comment-input" />
       <button onclick="updateComment('${date}')">💾 Zapisz komentarz</button>
       <button onclick="deleteEntry('${date}')">🗑️ Usuń</button>
     `;
@@ -96,7 +112,7 @@ function renderCalendar() {
   const year = today.getFullYear();
   const month = today.getMonth();
 
-  const firstDay = new Date(year, month, 1).getDay();
+  const firstDay = new Date(year, month, 1).getDay(); // 0 = Niedziela
   const daysInMonth = new Date(year, month + 1, 0).getDate();
 
   const calendarGrid = document.createElement("div");
@@ -114,7 +130,8 @@ function renderCalendar() {
     calendarGrid.appendChild(cell);
   });
 
-  for (let i = 0; i < firstDay; i++) {
+  const offset = firstDay === 0 ? 6 : firstDay - 1; // Zaczynamy od poniedziałku
+  for (let i = 0; i < offset; i++) {
     const emptyCell = document.createElement("div");
     calendarGrid.appendChild(emptyCell);
   }
@@ -128,17 +145,21 @@ function renderCalendar() {
     cell.style.borderRadius = "6px";
     cell.style.textAlign = "center";
     cell.style.background = "#fafafa";
-    cell.innerHTML = `<strong>${day}</strong><br>${entry.mood || ''}<br><small>${entry.comment || ''}</small>`;
+    cell.innerHTML = `
+      <strong>${day}</strong><br>
+      ${entry.mood || ''}<br>
+      <small>${escapeHTML(entry.comment || '')}</small>
+    `;
     calendarGrid.appendChild(cell);
   }
 
   container.appendChild(calendarGrid);
 }
 
-// Automatyczne uruchamianie funkcji w zależności od strony
 document.addEventListener("DOMContentLoaded", () => {
   showToday();
   showHistory();
   showStats();
   renderCalendar();
 });
+
