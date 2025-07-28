@@ -9,6 +9,13 @@ function escapeHTML(text) {
   return div.innerHTML;
 }
 
+
+function handleMoodClick(button, mood) {
+  // Usuń .selected ze wszystkich
+  document.querySelectorAll(".mood-options button").forEach(btn => btn.classList.remove("selected"));
+  button.classList.add("selected");
+}
+
 function saveMood(mood) {
   const date = getTodayDate();
   const comment = document.getElementById("comment")?.value || "";
@@ -161,5 +168,28 @@ document.addEventListener("DOMContentLoaded", () => {
   showHistory();
   showStats();
   renderCalendar();
+  
+document.getElementById("mood-form")?.addEventListener("submit", function (e) {
+  e.preventDefault();
+
+  // Sprawdź, czy jakiś przycisk z klasą "selected" został kliknięty
+  const selectedBtn = document.querySelector(".mood-options button.selected");
+
+  if (!selectedBtn) {
+    alert("Wybierz swój nastrój przed wysłaniem.");
+    return;
+  }
+
+  const mood = selectedBtn.textContent;
+  saveMood(mood); // Zapisz nastrój + komentarz
+
+  // Wyczyść formularz i odznacz nastrój
+  document.getElementById("comment").value = "";
+  selectedBtn.classList.remove("selected");
+
+  // Odśwież historię
+  showHistory();
 });
+
+
 
