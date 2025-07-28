@@ -168,6 +168,57 @@ document.addEventListener("DOMContentLoaded", () => {
   showHistory();
   showStats();
   renderCalendar();
+  // Globalna zmienna do przechowywania wybranego nastroju
+let selectedMood = null;
+
+// Nasłuchuj kliknięć na emoji
+document.querySelectorAll(".mood-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    // Usuń zaznaczenie ze wszystkich
+    document.querySelectorAll(".mood-btn").forEach(b => b.classList.remove("selected"));
+    // Dodaj zaznaczenie do klikniętego
+    btn.classList.add("selected");
+    // Zapamiętaj wybrany nastrój
+    selectedMood = btn.textContent;
+    // Wyczyść status
+    document.getElementById("status").textContent = "";
+  });
+});
+
+// Obsługa submit formularza
+document.getElementById("mood-form").addEventListener("submit", e => {
+  e.preventDefault(); // blokuj odświeżenie strony
+
+  if (!selectedMood) {
+    alert("Wybierz nastrój przed wysłaniem!");
+    return;
+  }
+
+  const comment = document.getElementById("comment").value.trim();
+  const date = getTodayDate();
+
+  // Pobierz lub stwórz obiekt nastrojów
+  const moods = JSON.parse(localStorage.getItem("moods")) || {};
+
+  // Zapisz aktualny nastrój z komentarzem
+  moods[date] = { mood: selectedMood, comment };
+
+  // Zapisz w localStorage
+  localStorage.setItem("moods", JSON.stringify(moods));
+
+  // Pokaż status
+  document.getElementById("status").textContent = `Zapisano: ${selectedMood}`;
+
+  // Wyczyść formularz i zaznaczenie
+  document.getElementById("comment").value = "";
+  document.querySelectorAll(".mood-btn").forEach(b => b.classList.remove("selected"));
+  selectedMood = null;
+
+  // Odśwież statystyki i historię (zakładam, że masz te funkcje)
+  showStats();
+  showHistory();
+});
+
   
 document.getElementById("mood-form")?.addEventListener("submit", function (e) {
   e.preventDefault();
