@@ -14,6 +14,49 @@ body {
   font-family: 'Inter', sans-serif;
 }
 
+form {   
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    font-size: 1.8rem;
+    box-sizing: border-box;
+    font-weight: bold;
+    unicode-bidi: isolate;
+    text-align: left;
+    font-family: 'Inter', sans-serif;
+}
+
+button[type="submit"] {
+  background-color: #6495ed;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+#mood-form button[type="submit"]:hover {
+  background-color: #417de0;
+}
+
+textarea#comment {
+  width: 100%;
+  max-width: 400px;
+  padding: 0.75rem;
+  border: 2px solid #ccc;
+  border-radius: 10px;
+  font-size: 1rem;
+  resize: none;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+textarea#comment:focus {
+  border-color: #6495ed;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(100, 149, 237, 0.2);
+}
+
 .container {
   max-width: 600px;
   margin: 40px auto;
@@ -154,3 +197,39 @@ img.header-image {
     font-size: 1.2rem;
   }
 }
+body::before {
+    content: "";
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: radial-gradient(circle, rgba(75,116,255,0.05) 1px, transparent 1px);
+    background-size: 40px 40px;
+    z-index: -1;
+    animation: moveDots 20s linear infinite;
+  }
+  
+  @keyframes moveDots {
+    0% { background-position: 0 0; }
+    100% { background-position: 40px 40px; }
+  }
+  body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -1;
+    background: radial-gradient(circle, rgba(75,116,255,0.06) 1px, transparent 1px);
+    background-size: 40px 40px;
+    animation: moveDots 20s linear infinite;
+  }
+  @keyframes moveDots {
+    0% {
+      background-position: 0 0;
+    }
+    100% {
+      background-position: 40px 40px;
+    }
+  }
